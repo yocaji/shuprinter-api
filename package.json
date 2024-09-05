@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "wrangler dev src/index.ts",
     "deploy": "wrangler deploy --minify src/index.ts",
+    "setdb": "wrangler secret put DATABASE_URL",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
