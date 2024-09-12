@@ -5,6 +5,7 @@
     "dev": "wrangler dev src/index.ts",
     "deploy": "wrangler deploy --minify src/index.ts",
     "setdb": "wrangler secret put DATABASE_URL",
+    "test": "vitest",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
@@ -24,9 +25,15 @@
     "prisma": "^5.19.1",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.4.0",
+    "vitest": "^2.0.5",
     "wrangler": "^3.57.2"
   },
   "volta": {
     "node": "22.8.0"
+  },
+  "overrides": {
+    "wrangler": {
+      "path-to-regexp": "8.0.0"
+    }
   }
 }

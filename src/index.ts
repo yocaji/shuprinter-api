@@ -45,3 +45,5 @@ app.post('/notes/create', async (c) => {
   console.log(sprint);
 });
 export default app;
+
+export interface app {}
