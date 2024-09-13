@@ -25,23 +25,24 @@ app.get('/', (c) => {
 app.get('/notes/:key', async (c) => {
   const { key } = c.req.param();
   const prisma = getPrisma(c.env.DATABASE_URL);
-  const note = await prisma.sprint.findFirst({
+  const note = await prisma.note.findFirst({
     where: {
-      hash: key,
+      key: key,
     },
   });
   return c.json(note);
 });
 
 app.post('/notes/create', async (c) => {
+  const { subject, key } = await c.req.json();
+
   const prisma = getPrisma(c.env.DATABASE_URL);
-  const sprint = await prisma.sprint.create({
+  const note = await prisma.note.create({
     data: {
-      subject: 'Alice is a friend of mine',
-      content: 'She is a good friend, and I like her a lot.',
-      hash: 'alice-friend',
+      subject: subject,
+      key: key,
     },
   });
-  console.log(sprint);
+  return c.json(note);
 });
 export default app;
