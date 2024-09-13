@@ -1,4 +1,4 @@
-import { Hono } from 'hono';
+import { Env, Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { getPrisma } from './prismaFunction';
 
@@ -7,7 +7,7 @@ const app = new Hono<{
     DATABASE_URL: string;
     CORS_ORIGIN: string;
   };
-}>();
+}>() satisfies ExportedHandler<Env>;
 
 app.use('/*', async (c, next) => {
   const corsMiddlewareHandler = cors({
@@ -18,7 +18,7 @@ app.use('/*', async (c, next) => {
   return corsMiddlewareHandler(c, next);
 });
 
-app.get('/', (c) => {
+const routes = app.get('/', (c) => {
   return c.text('Hello Hono!');
 });
 
@@ -45,5 +45,3 @@ app.post('/notes/create', async (c) => {
   console.log(sprint);
 });
 export default app;
-
-export interface app {}
