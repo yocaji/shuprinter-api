@@ -18,7 +18,7 @@ app.use('/*', async (c, next) => {
   return corsMiddlewareHandler(c, next);
 });
 
-const routes = app.get('/', (c) => {
+app.get('/', (c) => {
   return c.text('Hello Hono!');
 });
 
