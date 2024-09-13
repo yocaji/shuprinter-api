@@ -8,9 +8,9 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model Sprint {
+model Note {
   id      Int     @id @default(autoincrement())
   subject String
   content String?
-  hash    String
+  key     String
 }

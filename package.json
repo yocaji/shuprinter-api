@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "wrangler dev src/index.ts",
     "deploy": "wrangler deploy --minify src/index.ts",
+    "migrate": "dotenv -e .dev.vars -- npx prisma migrate dev",
     "test": "vitest",
     "lint": "eslint .",
     "format": "prettier --write ."
@@ -18,6 +19,7 @@
     "@prisma/client": "^5.19.1",
     "@prisma/extension-accelerate": "^1.1.0",
     "@types/eslint__js": "^8.42.3",
+    "dotenv-cli": "^7.4.2",
     "eslint": "^9.9.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
