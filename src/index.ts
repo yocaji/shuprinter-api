@@ -8,17 +8,14 @@ type Bindings = {
   CORS_ORIGIN: string;
 };
 
-const app = new OpenAPIHono<{
-  Bindings: Bindings;
-}>();
+const app = new OpenAPIHono<{ Bindings: Bindings }>();
 
 app.use('/*', async (c, next) => {
-  const corsMiddlewareHandler = cors({
+  return cors({
     origin: c.env.CORS_ORIGIN,
     allowMethods: ['GET', 'POST'],
     maxAge: 86400,
-  });
-  return corsMiddlewareHandler(c, next);
+  })(c, next);
 });
 
 app.openapi(welcomeRoute, (c) => {
@@ -40,11 +37,9 @@ app.openapi(
         noteKey,
       },
     });
-    if (!note) {
-      return c.json({ code: 404, message: 'Not Found' }, 404);
-    } else {
-      return c.json(note, 200);
-    }
+    return note
+      ? c.json(note, 200)
+      : c.json({ code: 404, message: 'Not Found' }, 404);
   },
   (result, c) => {
     return c.json({ code: 400, message: 'Validation Error' }, 400);
@@ -55,7 +50,6 @@ app.openapi(
   createNoteRoute,
   async (c) => {
     const { noteKey, subject, content } = c.req.valid('json');
-
     const prisma = getPrisma(c.env.DATABASE_URL);
     const note = await prisma.note.create({
       data: {
@@ -64,11 +58,9 @@ app.openapi(
         content,
       },
     });
-    if (!note) {
-      return c.json({ code: 400, message: 'Bad Request' }, 400);
-    } else {
-      return c.json(note, 201);
-    }
+    return note
+      ? c.json(note, 201)
+      : c.json({ code: 400, message: 'Bad Request' }, 400);
   },
   (result, c) => {
     return c.json({ code: 400, message: 'Validation Error' }, 400);
