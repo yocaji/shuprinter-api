@@ -1,11 +1,5 @@
 import { z } from '@hono/zod-openapi';
 
-export const WelcomeSchema = z.object({
-  message: z.string().openapi({
-    example: 'Hi!',
-  }),
-});
-
 export const NoteSchema = z
   .object({
     noteKey: z.string().openapi({
@@ -34,13 +28,4 @@ export const NoteParamsSchema = z.object({
       example:
         'b975ceeb58c2bb1d9bdf6162c64c5e2dde2b3493397ceb85841ab50714653a38',
     }),
-});
-
-export const ErrorSchema = z.object({
-  code: z.number().openapi({
-    example: 400,
-  }),
-  message: z.string().openapi({
-    example: 'Bad Request',
-  }),
 });

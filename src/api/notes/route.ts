@@ -1,29 +1,10 @@
 import { createRoute } from '@hono/zod-openapi';
-import {
-  WelcomeSchema,
-  NoteParamsSchema,
-  NoteSchema,
-  ErrorSchema,
-} from './schema';
-
-export const welcomeRoute = createRoute({
-  method: 'get',
-  path: '/',
-  responses: {
-    200: {
-      content: {
-        'application/json': {
-          schema: WelcomeSchema,
-        },
-      },
-      description: 'Hello Hono!',
-    },
-  },
-});
+import { NoteParamsSchema, NoteSchema } from './schema';
+import { ErrorSchema } from '../common/schema';
 
 export const createNoteRoute = createRoute({
   method: 'post',
-  path: '/notes/create',
+  path: '/create',
   request: {
     body: {
       required: true,
@@ -64,7 +45,7 @@ export const createNoteRoute = createRoute({
 
 export const noteRoute = createRoute({
   method: 'get',
-  path: '/notes/{noteKey}',
+  path: '/{noteKey}',
   request: {
     params: NoteParamsSchema,
   },
