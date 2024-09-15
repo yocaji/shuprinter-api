@@ -51,6 +51,14 @@ export const createNoteRoute = createRoute({
       },
       description: 'Bad Request',
     },
+    404: {
+      content: {
+        'application/json': {
+          schema: ErrorSchema,
+        },
+      },
+      description: 'Not Found',
+    },
   },
 });
 

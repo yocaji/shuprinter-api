@@ -42,7 +42,9 @@ app.openapi(
       : c.json({ code: 404, message: 'Not Found' }, 404);
   },
   (result, c) => {
-    return c.json({ code: 400, message: 'Validation Error' }, 400);
+    if (!result.success) {
+      return c.json({ code: 400, message: 'Validation Error' }, 400);
+    }
   },
 );
 
@@ -60,10 +62,12 @@ app.openapi(
     });
     return note
       ? c.json(note, 201)
-      : c.json({ code: 400, message: 'Bad Request' }, 400);
+      : c.json({ code: 404, message: 'Not Found' }, 404);
   },
   (result, c) => {
-    return c.json({ code: 400, message: 'Validation Error' }, 400);
+    if (!result.success) {
+      return c.json({ code: 400, message: 'Validation Error' }, 400);
+    }
   },
 );
 
