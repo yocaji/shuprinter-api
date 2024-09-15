@@ -24,7 +24,7 @@ export const NoteSchema = z
 export const NoteParamsSchema = z.object({
   noteKey: z
     .string()
-    .min(64)
+    .length(64)
     .openapi({
       param: {
         name: 'noteKey',
