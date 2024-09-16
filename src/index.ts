@@ -1,4 +1,5 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
+import { swaggerUI } from '@hono/swagger-ui';
 import { cors } from 'hono/cors';
 import { rootApp } from './api/root';
 import { noteApp } from './api/notes';
@@ -8,6 +9,9 @@ type Bindings = {
 };
 
 const app = new OpenAPIHono<{ Bindings: Bindings }>();
+
+app.route('/', rootApp);
+app.route('/notes', noteApp);
 
 app.use('/*', async (c, next) => {
   return cors({
@@ -25,7 +29,6 @@ app.doc('/doc', {
   },
 });
 
-app.route('/', rootApp);
-app.route('/notes', noteApp);
+app.get('/ui', swaggerUI({ url: '/doc' }));
 
 export default app;
