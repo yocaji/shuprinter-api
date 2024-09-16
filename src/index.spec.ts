@@ -8,7 +8,19 @@ describe('GET /doc', () => {
   test('OpenAPI Specが表示されること', async () => {
     const response = await SELF.fetch('http://example.com/doc');
     const data = await response.json();
-    // @ts-ignore
+    // @ts-expect-error: OpenAPI Specの型を検証する意味がないため
     expect(data.info.title).toBe('SprintPost API');
+  });
+});
+
+describe('GET /ui', () => {
+  test('レスポンスコードが200であること', async () => {
+    const response = await SELF.fetch('http://example.com/ui');
+    expect(response.status).toBe(200);
+  });
+  test('Swagger UIが表示されること', async () => {
+    const response = await SELF.fetch('http://example.com/ui');
+    const data = await response.text();
+    expect(data).toContain('<title>SwaggerUI</title>');
   });
 });
