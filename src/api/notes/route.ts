@@ -6,6 +6,15 @@ import {
 } from './schema';
 import { ErrorSchema } from '../common/schema';
 
+const errorContent = {
+  content: {
+    'application/json': {
+      schema: ErrorSchema,
+    },
+  },
+  description: 'Bad Request',
+};
+
 export const createNoteRoute = createRoute({
   method: 'post',
   path: '/new',
@@ -28,22 +37,8 @@ export const createNoteRoute = createRoute({
       },
       description: 'Create a note',
     },
-    400: {
-      content: {
-        'application/json': {
-          schema: ErrorSchema,
-        },
-      },
-      description: 'Bad Request',
-    },
-    404: {
-      content: {
-        'application/json': {
-          schema: ErrorSchema,
-        },
-      },
-      description: 'Not Found',
-    },
+    400: { errorContent, description: 'Bad Request' },
+    404: { errorContent, description: 'Not Found' },
   },
 });
 
@@ -52,6 +47,14 @@ export const readNoteRoute = createRoute({
   path: '/{id}',
   request: {
     params: getNoteParamsSchema,
+    body: {
+      required: true,
+      content: {
+        'application/json': {
+          schema: createNoteBodySchema,
+        },
+      },
+    },
   },
   responses: {
     200: {
@@ -62,21 +65,35 @@ export const readNoteRoute = createRoute({
       },
       description: 'Retrieve the note by noteKey',
     },
-    400: {
+    400: { errorContent, description: 'Bad Request' },
+    404: { errorContent, description: 'Not Found' },
+  },
+});
+
+export const updateNoteRoute = createRoute({
+  method: 'put',
+  path: '/{id}',
+  request: {
+    params: getNoteParamsSchema,
+    body: {
+      required: true,
       content: {
         'application/json': {
-          schema: ErrorSchema,
+          schema: createNoteBodySchema,
         },
       },
-      description: 'Bad Request',
     },
-    404: {
+  },
+  responses: {
+    200: {
       content: {
         'application/json': {
-          schema: ErrorSchema,
+          schema: responseNoteSchema,
         },
       },
-      description: 'Not Found',
+      description: 'Retrieve the note by noteKey',
     },
+    400: { errorContent, description: 'Bad Request' },
+    404: { errorContent, description: 'Not Found' },
   },
 });
