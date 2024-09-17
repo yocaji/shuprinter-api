@@ -9,8 +9,9 @@ datasource db {
 }
 
 model Note {
-  id      Int     @id @default(autoincrement())
+  id      String @id @default(uuid())
   subject String
   content String
-  noteKey String
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
 }

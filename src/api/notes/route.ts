@@ -1,16 +1,20 @@
 import { createRoute } from '@hono/zod-openapi';
-import { NoteParamsSchema, NoteSchema } from './schema';
+import {
+  createNoteBodySchema,
+  responseNoteSchema,
+  getNoteParamsSchema,
+} from './schema';
 import { ErrorSchema } from '../common/schema';
 
 export const createNoteRoute = createRoute({
   method: 'post',
-  path: '/create',
+  path: '/new',
   request: {
     body: {
       required: true,
       content: {
         'application/json': {
-          schema: NoteSchema,
+          schema: createNoteBodySchema,
         },
       },
     },
@@ -19,7 +23,7 @@ export const createNoteRoute = createRoute({
     201: {
       content: {
         'application/json': {
-          schema: NoteSchema,
+          schema: responseNoteSchema,
         },
       },
       description: 'Create a note',
@@ -43,17 +47,17 @@ export const createNoteRoute = createRoute({
   },
 });
 
-export const noteRoute = createRoute({
+export const readNoteRoute = createRoute({
   method: 'get',
-  path: '/{noteKey}',
+  path: '/{id}',
   request: {
-    params: NoteParamsSchema,
+    params: getNoteParamsSchema,
   },
   responses: {
     200: {
       content: {
         'application/json': {
-          schema: NoteSchema,
+          schema: responseNoteSchema,
         },
       },
       description: 'Retrieve the note by noteKey',

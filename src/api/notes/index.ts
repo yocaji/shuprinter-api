@@ -1,5 +1,5 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
-import { noteRoute, createNoteRoute } from './route';
+import { createNoteRoute, readNoteRoute } from './route';
 import { getPrisma } from '../../utils/prisma';
 
 type Bindings = {
@@ -9,22 +9,18 @@ type Bindings = {
 const noteApp = new OpenAPIHono<{ Bindings: Bindings }>();
 
 noteApp.openapi(
-  noteRoute,
+  createNoteRoute,
   async (c) => {
-    const { noteKey } = c.req.valid('param');
+    const { subject, content } = c.req.valid('json');
     const prisma = getPrisma(c.env.DATABASE_URL);
-    const note = await prisma.note.findFirst({
-      select: {
-        noteKey: true,
-        subject: true,
-        content: true,
-      },
-      where: {
-        noteKey,
+    const note = await prisma.note.create({
+      data: {
+        subject,
+        content,
       },
     });
     return note
-      ? c.json(note, 200)
+      ? c.json(note, 201)
       : c.json({ code: 404, message: 'Not Found' }, 404);
   },
   (result, c) => {
@@ -35,19 +31,17 @@ noteApp.openapi(
 );
 
 noteApp.openapi(
-  createNoteRoute,
+  readNoteRoute,
   async (c) => {
-    const { noteKey, subject, content } = c.req.valid('json');
+    const { id } = c.req.valid('param');
     const prisma = getPrisma(c.env.DATABASE_URL);
-    const note = await prisma.note.create({
-      data: {
-        noteKey,
-        subject,
-        content,
+    const note = await prisma.note.findUnique({
+      where: {
+        id,
       },
     });
     return note
-      ? c.json(note, 201)
+      ? c.json(note, 200)
       : c.json({ code: 404, message: 'Not Found' }, 404);
   },
   (result, c) => {
