@@ -1,8 +1,21 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { swaggerUI } from '@hono/swagger-ui';
+import { cors } from 'hono/cors';
 import { noteApp } from './notes';
 
-const apiApp = new OpenAPIHono();
+type Bindings = {
+  CORS_ORIGIN: string;
+};
+
+const apiApp = new OpenAPIHono<{ Bindings: Bindings }>();
+
+apiApp.use('/*', async (c, next) => {
+  return cors({
+    origin: c.env.CORS_ORIGIN,
+    allowMethods: ['GET', 'POST', 'PUT'],
+    maxAge: 86400,
+  })(c, next);
+});
 
 apiApp.route('/notes', noteApp);
 
