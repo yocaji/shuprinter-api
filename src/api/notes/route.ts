@@ -70,6 +70,23 @@ export const readNoteRoute = createRoute({
   },
 });
 
+export const readNotesRoute = createRoute({
+  method: 'get',
+  path: '/',
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: responseNoteSchema,
+        },
+      },
+      description: 'Get notes by user',
+    },
+    400: { errorContent, description: 'Bad Request' },
+    404: { errorContent, description: 'Not Found' },
+  },
+});
+
 export const updateNoteRoute = createRoute({
   method: 'put',
   path: '/{id}',
