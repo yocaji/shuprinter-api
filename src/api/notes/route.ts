@@ -47,14 +47,6 @@ export const readNoteRoute = createRoute({
   path: '/{id}',
   request: {
     params: getNoteParamsSchema,
-    body: {
-      required: true,
-      content: {
-        'application/json': {
-          schema: createNoteBodySchema,
-        },
-      },
-    },
   },
   responses: {
     200: {
@@ -63,7 +55,7 @@ export const readNoteRoute = createRoute({
           schema: responseNoteSchema,
         },
       },
-      description: 'Retrieve the note by noteKey',
+      description: 'Retrieve a note by noteKey',
     },
     400: { errorContent, description: 'Bad Request' },
     404: { errorContent, description: 'Not Found' },
@@ -108,7 +100,27 @@ export const updateNoteRoute = createRoute({
           schema: responseNoteSchema,
         },
       },
-      description: 'Retrieve the note by noteKey',
+      description: 'Retrieve a note by noteKey',
+    },
+    400: { errorContent, description: 'Bad Request' },
+    404: { errorContent, description: 'Not Found' },
+  },
+});
+
+export const deleteNoteRoute = createRoute({
+  method: 'delete',
+  path: '/{id}',
+  request: {
+    params: getNoteParamsSchema,
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: responseNoteSchema,
+        },
+      },
+      description: 'Delete a note by noteKey',
     },
     400: { errorContent, description: 'Bad Request' },
     404: { errorContent, description: 'Not Found' },

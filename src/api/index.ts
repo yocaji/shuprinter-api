@@ -12,7 +12,7 @@ const apiApp = new OpenAPIHono<{ Bindings: Bindings }>();
 apiApp.use('/*', async (c, next) => {
   return cors({
     origin: c.env.CORS_ORIGIN,
-    allowMethods: ['GET', 'POST', 'PUT'],
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
     maxAge: 86400,
   })(c, next);
 });
