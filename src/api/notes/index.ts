@@ -4,6 +4,7 @@ import {
   readNoteRoute,
   readNotesRoute,
   updateNoteRoute,
+  deleteNoteRoute,
 } from './route';
 import { getPrisma } from '../../utils/prisma';
 
@@ -82,6 +83,25 @@ noteApp.openapi(
     });
     return note
       ? c.json(note, 200)
+      : c.json({ code: 404, message: 'Not Found' }, 404);
+  },
+  (result, c) => {
+    if (!result.success) {
+      return c.json({ code: 400, message: 'Validation Error' }, 400);
+    }
+  },
+);
+
+noteApp.openapi(
+  deleteNoteRoute,
+  async (c) => {
+    const { id } = c.req.valid('param');
+    const prisma = getPrisma(c.env.DATABASE_URL);
+    const response = await prisma.note.delete({
+      where: { id },
+    });
+    return response
+      ? c.json(response, 200)
       : c.json({ code: 404, message: 'Not Found' }, 404);
   },
   (result, c) => {

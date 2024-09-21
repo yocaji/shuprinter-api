@@ -19,6 +19,11 @@ const noteGenerated = {
     example: '2022-01-01T00:00:00Z',
   }),
 };
+const noteId = {
+  id: z.string().uuid().openapi({
+    example: '47fa58e4-6692-449c-b091-074f246d6ae8',
+  }),
+};
 
 export const createNoteBodySchema = z
   .object({
@@ -47,12 +52,16 @@ export const responseNoteSchema = z
   });
 
 export const getNoteParamsSchema = z.object({
-  id: z.string().openapi({
-    param: {
-      name: 'id',
-      in: 'path',
-      required: true,
-    },
-    example: '47fa58e4-6692-449c-b091-074f246d6ae8',
-  }),
+  ...noteId,
 });
+
+// export const getNoteParamsSchema = z.object({
+//   id: z.string().openapi({
+//     param: {
+//       name: 'id',
+//       in: 'path',
+//       required: true,
+//     },
+//     example: '47fa58e4-6692-449c-b091-074f246d6ae8',
+//   }),
+// });
