@@ -1,6 +1,6 @@
 import { createRoute } from '@hono/zod-openapi';
 import {
-  createNoteBodySchema,
+  upsertNoteBodySchema,
   responseNoteSchema,
   getNoteParamsSchema,
 } from './schema';
@@ -14,33 +14,6 @@ const errorContent = {
   },
   description: 'Bad Request',
 };
-
-export const createNoteRoute = createRoute({
-  method: 'post',
-  path: '/new',
-  request: {
-    body: {
-      required: true,
-      content: {
-        'application/json': {
-          schema: createNoteBodySchema,
-        },
-      },
-    },
-  },
-  responses: {
-    201: {
-      content: {
-        'application/json': {
-          schema: responseNoteSchema,
-        },
-      },
-      description: 'Create a note',
-    },
-    400: { errorContent, description: 'Bad Request' },
-    404: { errorContent, description: 'Not Found' },
-  },
-});
 
 export const readNoteRoute = createRoute({
   method: 'get',
@@ -79,7 +52,7 @@ export const readNotesRoute = createRoute({
   },
 });
 
-export const updateNoteRoute = createRoute({
+export const upsertNoteRoute = createRoute({
   method: 'put',
   path: '/{id}',
   request: {
@@ -88,7 +61,7 @@ export const updateNoteRoute = createRoute({
       required: true,
       content: {
         'application/json': {
-          schema: createNoteBodySchema,
+          schema: upsertNoteBodySchema,
         },
       },
     },
