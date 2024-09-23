@@ -9,9 +9,10 @@ datasource db {
 }
 
 model Note {
-  id      String @id @default(uuid())
+  id      String @unique
   subject String
   content String
+  userId  String
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 }
