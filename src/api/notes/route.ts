@@ -2,7 +2,7 @@ import { createRoute } from '@hono/zod-openapi';
 import {
   upsertNoteBodySchema,
   responseNoteSchema,
-  getNoteParamsSchema,
+  noteParamsSchema,
 } from './schema';
 import { ErrorSchema } from '../common/schema';
 
@@ -19,7 +19,7 @@ export const readNoteRoute = createRoute({
   method: 'get',
   path: '/{id}',
   request: {
-    params: getNoteParamsSchema,
+    params: noteParamsSchema,
   },
   responses: {
     200: {
@@ -35,28 +35,11 @@ export const readNoteRoute = createRoute({
   },
 });
 
-export const readNotesRoute = createRoute({
-  method: 'get',
-  path: '/',
-  responses: {
-    200: {
-      content: {
-        'application/json': {
-          schema: responseNoteSchema,
-        },
-      },
-      description: 'Get notes by user',
-    },
-    400: { errorContent, description: 'Bad Request' },
-    404: { errorContent, description: 'Not Found' },
-  },
-});
-
 export const upsertNoteRoute = createRoute({
   method: 'put',
   path: '/{id}',
   request: {
-    params: getNoteParamsSchema,
+    params: noteParamsSchema,
     body: {
       required: true,
       content: {
@@ -84,7 +67,7 @@ export const deleteNoteRoute = createRoute({
   method: 'delete',
   path: '/{id}',
   request: {
-    params: getNoteParamsSchema,
+    params: noteParamsSchema,
   },
   responses: {
     200: {

@@ -1,10 +1,5 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
-import {
-  readNoteRoute,
-  readNotesRoute,
-  upsertNoteRoute,
-  deleteNoteRoute,
-} from './route';
+import { readNoteRoute, upsertNoteRoute, deleteNoteRoute } from './route';
 import { getPrisma } from '../../utils/prisma';
 
 type Bindings = {
@@ -20,25 +15,6 @@ noteApp.openapi(
     const prisma = getPrisma(c.env.DATABASE_URL);
     const note = await prisma.note.findUnique({
       where: { id },
-    });
-    return note
-      ? c.json(note, 200)
-      : c.json({ code: 404, message: 'Not Found' }, 404);
-  },
-  (result, c) => {
-    if (!result.success) {
-      return c.json({ code: 400, message: 'Validation Error' }, 400);
-    }
-  },
-);
-
-noteApp.openapi(
-  readNotesRoute,
-  async (c) => {
-    const prisma = getPrisma(c.env.DATABASE_URL);
-    const note = await prisma.note.findMany({
-      orderBy: { updatedAt: 'desc' },
-      take: 5,
     });
     return note
       ? c.json(note, 200)
