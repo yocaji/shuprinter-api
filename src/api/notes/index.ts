@@ -1,9 +1,8 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
 import {
-  createNoteRoute,
   readNoteRoute,
   readNotesRoute,
-  updateNoteRoute,
+  upsertNoteRoute,
   deleteNoteRoute,
 } from './route';
 import { getPrisma } from '../../utils/prisma';
@@ -13,25 +12,6 @@ type Bindings = {
 };
 
 const noteApp = new OpenAPIHono<{ Bindings: Bindings }>();
-
-noteApp.openapi(
-  createNoteRoute,
-  async (c) => {
-    const { subject, content } = c.req.valid('json');
-    const prisma = getPrisma(c.env.DATABASE_URL);
-    const note = await prisma.note.create({
-      data: { subject, content },
-    });
-    return note
-      ? c.json(note, 201)
-      : c.json({ code: 404, message: 'Not Found' }, 404);
-  },
-  (result, c) => {
-    if (!result.success) {
-      return c.json({ code: 400, message: 'Validation Error' }, 400);
-    }
-  },
-);
 
 noteApp.openapi(
   readNoteRoute,
@@ -72,14 +52,15 @@ noteApp.openapi(
 );
 
 noteApp.openapi(
-  updateNoteRoute,
+  upsertNoteRoute,
   async (c) => {
     const { id } = c.req.valid('param');
-    const { subject, content } = c.req.valid('json');
+    const { subject, content, userId } = c.req.valid('json');
     const prisma = getPrisma(c.env.DATABASE_URL);
-    const note = await prisma.note.update({
+    const note = await prisma.note.upsert({
       where: { id },
-      data: { subject, content },
+      create: { id, subject, content, userId },
+      update: { subject, content },
     });
     return note
       ? c.json(note, 200)
