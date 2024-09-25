@@ -15,6 +15,7 @@ userApp.openapi(
     const prisma = getPrisma(c.env.DATABASE_URL);
     const note = await prisma.note.findMany({
       where: { userId: id },
+      orderBy: { updatedAt: 'desc' },
     });
     return note
       ? c.json(note, 200)
