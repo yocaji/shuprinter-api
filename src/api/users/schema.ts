@@ -5,7 +5,16 @@ const userId = {
     example: 'S0RAA7Fk1TzcK2qPtET6b1oW4JjQ',
   }),
 };
+const count = {
+  count: z.number().int().openapi({
+    example: 3,
+  }),
+};
 
 export const userParamsSchema = z.object({
   ...userId,
+});
+
+export const userNotesDeletedResponseSchema = z.object({
+  ...count,
 });
