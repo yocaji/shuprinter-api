@@ -1,9 +1,6 @@
 import { z } from '@hono/zod-openapi';
 
 const noteInput = {
-  id: z.string().uuid().openapi({
-    example: '47fa58e4-6692-449c-b091-074f246d6ae8',
-  }),
   subject: z.string().openapi({
     example: 'About SprintPost',
   }),

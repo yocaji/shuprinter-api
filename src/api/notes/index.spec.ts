@@ -1,74 +1,123 @@
 import { SELF } from 'cloudflare:test';
 
-describe('Happy path', () => {
-  test('レスポンスコードが200であること', async () => {
-    const noteKey =
-      'b975ceeb58c2bb1d9bdf6162c64c5e2dde2b3493397ceb85841ab50714653a38';
-    const response = await SELF.fetch(`http://example.com/notes/${noteKey}`);
-    expect(response.status).toBe(200);
+beforeAll(async () => {
+  const noteId = '10000000-0000-0000-0000-000000000001';
+  const response = await SELF.fetch(`https://example.com/api/notes/${noteId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      subject: 'メモ1',
+      content: 'メモ1の本文',
+      userId: 'USER001XXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+    }),
   });
-
-  test('noteKey, subject, contentが含まれること', async () => {
-    const noteKey =
-      'b975ceeb58c2bb1d9bdf6162c64c5e2dde2b3493397ceb85841ab50714653a38';
-    const response = await SELF.fetch(`http://example.com/notes/${noteKey}`);
-    const data = await response.text();
-    expect(data).contains('noteKey');
-    expect(data).contains('subject');
-    expect(data).contains('content');
-  });
+  expect(response.status).toBe(200);
 });
 
-describe('Validation Error', () => {
-  test('noteKeyが文字数オーバーの時、バリデーションエラーとなること', async () => {
-    const noteKey =
-      'this_is_63_characters_string_1234567890abcdefghijklmnopqrstuvwx';
-    const response = await SELF.fetch(`http://example.com/notes/${noteKey}`);
-    expect(response.status).toBe(400);
-    expect(await response.json()).toMatchObject({
-      code: 400,
-      message: 'Validation Error',
-    });
+afterAll(async () => {
+  const noteId = '10000000-0000-0000-0000-000000000001';
+  const response = await SELF.fetch(`https://example.com/api/notes/${noteId}`, {
+    method: 'DELETE',
   });
-
-  test('noteKeyが文字数不足の時、バリデーションエラーとなること', async () => {
-    const noteKey =
-      'this_is_65_characters_string_1234567890abcdefghijklmnopqrstuvwxyz';
-    const response = await SELF.fetch(`http://example.com/notes/${noteKey}`);
-    expect(response.status).toBe(400);
-    expect(await response.json()).toMatchObject({
-      code: 400,
-      message: 'Validation Error',
-    });
-  });
-
-  test('noteKeyがnullの時、バリデーションエラーとなること', async () => {
-    const noteKey = null;
-    const response = await SELF.fetch(`http://example.com/notes/${noteKey}`);
-    expect(response.status).toBe(400);
-    expect(await response.json()).toMatchObject({
-      code: 400,
-      message: 'Validation Error',
-    });
-  });
+  expect(response.status).toBe(200);
 });
 
-describe('Resource Not Found', () => {
-  test('存在しないkeyの時、Not Foundとなること', async () => {
-    const noteKey =
-      'this_is_64_characters_string_but_not_exist_1234567890abcdefghijk';
-    const response = await SELF.fetch(`http://example.com/notes/${noteKey}`);
-    expect(response.status).toBe(404);
-    expect(await response.json()).toMatchObject({
-      code: 404,
-      message: 'Not Found',
+describe('GET', () => {
+  describe('正常系', () => {
+    test('レスポンスコードが200であること', async () => {
+      const noteId = '10000000-0000-0000-0000-000000000001';
+      const response = await SELF.fetch(
+        `https://example.com/api/notes/${noteId}`,
+        { method: 'GET' },
+      );
+      expect(response.status).toBe(200);
+    });
+
+    test('レスポンスにid, subject, content, userId, updatedAt, createdAtが含まれること', async () => {
+      const noteId = '10000000-0000-0000-0000-000000000001';
+      const response = await SELF.fetch(
+        `https://example.com/api/notes/${noteId}`,
+        { method: 'GET' },
+      );
+      const data = await response.text().then((text) => JSON.parse(text));
+      expect(data).toMatchObject({
+        id: '10000000-0000-0000-0000-000000000001',
+        subject: 'メモ1',
+        content: 'メモ1の本文',
+        userId: 'USER001XXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+      });
+      expect(data).toHaveProperty('updatedAt');
+      expect(data).toHaveProperty('createdAt');
     });
   });
 
-  test('noteKeyが空のStringの時、Not Foundとなること', async () => {
-    const noteKey = '';
-    const response = await SELF.fetch(`http://example.com/notes/${noteKey}`);
-    expect(response.status).toBe(404);
-    expect(await response.text()).toBe('404 Not Found');
+  describe('異常系', () => {
+    describe('Resource Not Found', () => {
+      test('noteKeyが空のStringの時、Not Foundとなること', async () => {
+        const noteId = '';
+        const response = await SELF.fetch(
+          `https://example.com/api/notes/${noteId}`,
+          {
+            method: 'GET',
+          },
+        );
+        expect(response.status).toBe(404);
+        expect(await response.text()).toBe('404 Not Found');
+      });
+
+      test('存在しないkeyの時、Not Foundとなること', async () => {
+        const noteId = '90000000-0000-0000-0000-000000000001';
+        const response = await SELF.fetch(
+          `https://example.com/api/notes/${noteId}`,
+          { method: 'GET' },
+        );
+        expect(response.status).toBe(404);
+        expect(await response.json()).toMatchObject({
+          code: 404,
+          message: 'Not Found',
+        });
+      });
+    });
+
+    describe('Validation Error', () => {
+      test('noteIdが文字数不足の時、バリデーションエラーとなること', async () => {
+        const noteId = '90000000-0000-0000-0000-00000000035';
+        const response = await SELF.fetch(
+          `https://example.com/api/notes/${noteId}`,
+          { method: 'GET' },
+        );
+        expect(response.status).toBe(400);
+        expect(await response.json()).toMatchObject({
+          code: 400,
+          message: 'Validation Error',
+        });
+      });
+
+      test('noteKeyが文字数オーバーの時、バリデーションエラーとなること', async () => {
+        const noteId = '90000000-0000-0000-0000-0000000000037';
+        const response = await SELF.fetch(
+          `https://example.com/api/notes/${noteId}`,
+          { method: 'GET' },
+        );
+        expect(response.status).toBe(400);
+        expect(await response.json()).toMatchObject({
+          code: 400,
+          message: 'Validation Error',
+        });
+      });
+
+      test('noteIdがnullの時、バリデーションエラーとなること', async () => {
+        const noteId = null;
+        const response = await SELF.fetch(
+          `https://example.com/api/notes/${noteId}`,
+          { method: 'GET' },
+        );
+        expect(response.status).toBe(400);
+        expect(await response.json()).toMatchObject({
+          code: 400,
+          message: 'Validation Error',
+        });
+      });
+    });
   });
 });
